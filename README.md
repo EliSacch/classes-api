@@ -71,3 +71,26 @@ Fitness studio API to create classes and manage bookings
     - POST  /bookings
     - GET   /bookings/{id} - Return booking with id of {id}
     - DELETE    /bookings/{id} - Delete booking with id of {id}
+
+
+## Local deployment
+
+### 1. Clone the repo
+
+### 2. Create and start virtual environment (reccommended)
+
+### 3. Install dependencies from requirements.txt
+
+In the terminal run the following code
+
+        pip install -r requirements.txt
+
+### 4. Run the app
+
+In the terminal run the following code
+
+        // Windows
+        python main.py
+
+        // Mac or Linux
+        python3 main.py
