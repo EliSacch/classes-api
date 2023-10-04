@@ -94,3 +94,9 @@ In the terminal run the following code
 
         // Mac or Linux
         python3 main.py
+
+### 5. Run test
+
+In the rerminal run the following code
+
+        python test.py
