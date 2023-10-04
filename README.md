@@ -27,7 +27,7 @@ Fitness studio API to create classes and manage bookings
     - Implement an API endpoint (`/bookings`). Assume this api doesn't need to have any
     authentication to start with.
     - Few bare minimum details we need for reserving a class are - name(name of the member
-    who is booking the class), date(date for which the member want to book a class)
+    who is booking the class), date(date for which the member wants to book a class)
     - No need to save the details in DB. If you can maintain the state in an in memory array or a file
     is good to start with. But no constraints if you want to use a database to save the state.
     - Use REST standards and think through basic api responses for success and failure.
@@ -39,14 +39,35 @@ Fitness studio API to create classes and manage bookings
 ### Models
 
 1. __GymClass__
- - id - Integer, PrimaryKey
- - class_name - String, Required
- - capacity - Integer, Required
- - start_date - Date, Required
- - end_date - Date, Required
+    - id - Integer, PrimaryKey
+    - class_name - String, Required
+    - capacity - Integer, Required
+    - start_date - Date, Required
+    - end_date - Date, Required
+
+    Note: I decided to call this model GymClass, instead of "Class" because __"class"__ is a reserved keyword in python and using "Class" could have created confusion.
 
 
 2. __Booking__
- - id - Integer, PrimaryKey
- - client_name - String, Required
- - booked_date - Date, Required
+    - id - Integer, PrimaryKey
+    - client_name - String, Required
+    - booked_date - Date, Required
+
+
+### Endpoints
+
+1. Classes
+
+    Methods:
+    - GET   /classes - Return all classes
+    - POST  /classes - Create new class
+    - GET   /classes/{id} - Return class with id of {id}
+    - PUT   /classes/{id} - Edit class with id of {id}
+    - DELETE    /classes/{id} - Delete class with id of {id}
+
+2. Bookings
+
+    Methods:
+    - POST  /bookings
+    - GET   /bookings/{id} - Return booking with id of {id}
+    - DELETE    /bookings/{id} - Delete booking with id of {id}
