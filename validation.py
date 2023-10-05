@@ -37,6 +37,23 @@ def validate_class(new_class):
             except:
                 errors.append("Invalid date passed")
 
+    # If start_date and end_date are passed,
+    # we also check if the selected date is valid
+    if "start_date" in new_class.keys() and "end_date" in new_class.keys():
+        try:
+            start = parse(new_class["start_date"], dayfirst=True)
+            end = parse(new_class["end_date"], dayfirst=True)
+            today = parse(datetime.date.today().strftime('%d-%m-%Y'), dayfirst=True)
+            # Start date should not be in the past
+            if start < today:
+                errors.append(f"Start date {start} cannot be in the past {today}")
+            # end date should be after start date
+            if start > end:
+                errors.append("End date should be after start date")
+
+        except:
+            errors.append("Invalid date passed")
+
     # If there is any error, return them all
     if len(errors) > 0:
         result = {"error" : {
