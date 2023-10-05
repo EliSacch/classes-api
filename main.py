@@ -1,4 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
+from validation import validate_class
+
 import json
 
 
@@ -39,8 +41,11 @@ def classes():
     """
     if request.method == "POST":
         # Get posted information
-        new_class = request.json
-        id = new_class['id']
+        new_class = validate_class(request.json)
+        if "error" in new_class:
+            return new_class["error"]
+        else:
+            id = new_class['id']
 
         # Get existing data from data.json
         data = get_data()
