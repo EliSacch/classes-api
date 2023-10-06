@@ -66,7 +66,7 @@ def validate_class(new_class):
     # If there is any error, return them all
     if len(errors) > 0:
         result = {"error" : {
-            "There were some errors in your request": errors
+            "errors": errors
         }}
 
     return result

@@ -1,1 +1,1 @@
-{"all_classes": {"0": {"id": 0, "class_name": "Pilates", "capacity": 10, "start_date": "22-10-2023", "end_date": "1-12-2023"}, "1": {"id": 1, "class_name": "Box", "capacity": 12, "start_date": "2-12-2023", "end_date": "31-12-2023"}, "2": {"id": 2, "class_name": "Zumba", "capacity": 12, "start_date": "01-01-2024", "end_date": "31-01-2024"}}}
+{"all_classes": {"0": {"capacity": 12, "class_name": "Test class", "end_date": "3-03-2024", "id": 0, "start_date": "01-03-2024"}}}
