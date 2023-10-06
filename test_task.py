@@ -45,6 +45,7 @@ def test_cannot_add_class_with_invalid_capacity():
     response = app.test_client().post('/classes', json={"id": 1, "class_name": "Test class", "capacity": "invalid", "start_date": "01-04-2024", "end_date": "3-04-2024"})
     assert response.status_code == 400
 
+
 def test_cannot_add_class_with_negative_or_zero_capacity():
     response = app.test_client().post('/classes', json={"id": 1, "class_name": "Test class", "capacity": 0, "start_date": "01-04-2024", "end_date": "3-04-2024"})
     assert response.status_code == 400

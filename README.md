@@ -50,7 +50,7 @@ Fitness studio API to create classes and manage bookings
 2. __Booking__
     - id - Integer, PrimaryKey
     - client_name - String, Required
-    - booked_date - Date, Required
+    - date - Date, Required
 
 
 ### Endpoints
@@ -71,7 +71,7 @@ Fitness studio API to create classes and manage bookings
 
 ### 1. Clone the repo
 
-### 2. Create and start virtual environment (reccommended)
+### 2. Create and activate virtual environment (reccommended)
 
 ### 3. Install dependencies from requirements.txt
 
@@ -83,14 +83,10 @@ In the terminal run the following code
 
 In the terminal run the following code
 
-        // Windows
         python main.py
 
-        // Mac or Linux
-        python3 main.py
-
-### 5. Run test
+### 5. Run tests
 
 In the rerminal run the following code
 
-        python test.py
+        pytest

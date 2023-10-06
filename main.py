@@ -149,14 +149,13 @@ def bookings():
                         return {"message": "Booking confirmed"}, 201 # Created
                     except:
                         return {"There was a problem saving this booking"}, 500 # Server error
-
             else:
                 return {"error": "Please, choose a date."}, 400 # Bad request
 
     else:
         return {"meggage": "Book a class"}, 200 # OK
-
         
 
 if __name__ == "__main__":
+    # debug should be set to False in production, but I will leave it to True for assessment
     app.run(port=8000, debug=True)

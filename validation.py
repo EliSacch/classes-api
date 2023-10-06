@@ -22,7 +22,7 @@ def validate_date_format(passed_date):
 
 
 def validate_class(new_class):
-
+    """ This function validates the data submitted when creating a class """
     result = new_class
     errors = []
     start = None
