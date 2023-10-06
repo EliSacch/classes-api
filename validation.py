@@ -126,11 +126,22 @@ def validate_class_exists(date, existing_classes):
     return overlaps
 
 
+def validate_is_not_past_date(date):
+    """ This function is used to check that the booking is not in the past """
+    choosen_date = parse(date, dayfirst=True)
+    today = parse(datetime.date.today().strftime('%d-%m-%Y'), dayfirst=True)
+    return choosen_date > today
+
+
 def validate_booking(requested_class_date, existing_classes):
     """ This function is used to check if the booking is valid """
     is_valid = False
     is_valid_date = validate_date_format(requested_class_date)
     if is_valid_date is not None:
-        is_valid = validate_class_exists(requested_class_date, existing_classes)
+        check_class_exists = validate_class_exists(requested_class_date, existing_classes)
+        is_not_past_date = validate_is_not_past_date(requested_class_date)
+
+        if check_class_exists and is_not_past_date:
+            is_valid = True
 
     return is_valid
