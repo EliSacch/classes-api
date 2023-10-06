@@ -63,6 +63,18 @@ def validate_class(new_class):
         except:
             errors.append("Invalid date passed")
 
+    # check if capacity is integer
+    if "capacity" in new_class.keys():
+        try:
+            capacity = new_class["capacity"]
+            if isinstance (capacity, int):
+                if capacity <= 0:
+                    errors.append("Capacity should be a positive number")
+            else:
+                errors.append("Capacity should be a an integer")
+        except:
+            errors.append("Invalid value passed for 'capacity'")
+
     # If there is any error, return them all
     if len(errors) > 0:
         result = {"error" : {
@@ -114,23 +126,45 @@ def validate_overlapping(new_class, existing_classes):
 
 
 def validate_class_exists(date, existing_classes):
-    """ This function is used to check if there is any class for the selected date """
+    """ This function is used to check if there is any class for the selected date. """
     tuple1 = (date, date)
-    overlaps = False
+    class_exists = False
+    capacity = 0
 
     for i in range(len(existing_classes)):
         tuple2 = calculate_dates_tuples(i, existing_classes)
         if check_dates(tuple1, tuple2):
-            overlaps = True
+            class_exists = True
+            capacity = existing_classes[f"{i}"]["capacity"]
 
-    return overlaps
+    return class_exists, capacity
+
+
+def validate_is_not_past_date(date):
+    """ This function is used to check that the booking is not in the past """
+    choosen_date = parse(date, dayfirst=True)
+    today = parse(datetime.date.today().strftime('%d-%m-%Y'), dayfirst=True)
+    return choosen_date > today
 
 
 def validate_booking(requested_class_date, existing_classes):
     """ This function is used to check if the booking is valid """
+    # Initialize variables to be returned
     is_valid = False
-    is_valid_date = validate_date_format(requested_class_date)
-    if is_valid_date is not None:
-        is_valid = validate_class_exists(requested_class_date, existing_classes)
+    capacity = 0
 
-    return is_valid
+    # Check if the date is a valid format
+    is_valid_date = validate_date_format(requested_class_date)
+
+    # If the date is a valid format, and it was provided, check if there is a class
+    if is_valid_date is not None:
+        check_class = validate_class_exists(requested_class_date, existing_classes)
+        available_class = check_class[0]
+        is_not_past_date = validate_is_not_past_date(requested_class_date)
+
+
+        if available_class and is_not_past_date:
+            is_valid = True
+            capacity = check_class[1]
+
+    return is_valid, capacity

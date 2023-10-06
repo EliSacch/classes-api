@@ -26,6 +26,18 @@ def get_data():
         return {"error": "There was a problem retrieving the data from this file."}
     
 
+def check_capacity(class_date, data, class_capacity):
+    """ This function is used to check if the bookings have reached the availability for a class
+    in a specific date """
+    available = True
+    if "bookings" in data and class_date in data["bookings"]:
+        booked = data["bookings"][f"{class_date}"]
+        available = booked < class_capacity
+    
+    return available
+
+    
+
 def add_booking(class_date, data):
     """ This function is used to add a booking to the file """
     if "bookings" not in data:
@@ -121,9 +133,16 @@ def bookings():
 
             # check if date was passed
             if "date" in requested_class:
-                valid_booking = validate_booking(requested_class["date"], data["all_classes"])
+                check_booking = validate_booking(requested_class["date"], data["all_classes"])
+                valid_booking = check_booking[0]
+                class_capacity = check_booking[1]
+
+                is_available = check_capacity(requested_class["date"], data, class_capacity)
+                
                 if valid_booking == False:
                     return {"error": "Please, choose a valid date."}, 400 # Bad request
+                elif is_available == False:
+                    return {"error": "Sorry, this class is full."}, 400 # Bad request
                 else:
                     try:
                         add_booking(requested_class["date"], data)
