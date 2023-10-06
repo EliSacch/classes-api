@@ -111,3 +111,26 @@ def validate_overlapping(new_class, existing_classes):
             overlaps = True
 
     return overlaps
+
+
+def validate_class_exists(date, existing_classes):
+    """ This function is used to check if there is any class for the selected date """
+    tuple1 = (date, date)
+    overlaps = False
+
+    for i in range(len(existing_classes)):
+        tuple2 = calculate_dates_tuples(i, existing_classes)
+        if check_dates(tuple1, tuple2):
+            overlaps = True
+
+    return overlaps
+
+
+def validate_booking(requested_class_date, existing_classes):
+    """ This function is used to check if the booking is valid """
+    is_valid = False
+    is_valid_date = validate_date_format(requested_class_date)
+    if is_valid_date is not None:
+        is_valid = validate_class_exists(requested_class_date, existing_classes)
+
+    return is_valid
