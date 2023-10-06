@@ -65,8 +65,6 @@ Fitness studio API to create classes and manage bookings
 
     Methods:
     - POST  /bookings
-    - GET   /bookings/{id} - Return booking with id of {id}
-    - DELETE    /bookings/{id} - Delete booking with id of {id}
 
 
 ## Local deployment

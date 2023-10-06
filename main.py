@@ -1,5 +1,5 @@
 from flask import Flask, request
-from validation import validate_class, validate_overlapping
+from validation import validate_class, validate_overlapping, validate_booking
 
 import json
 
@@ -24,6 +24,19 @@ def get_data():
     except Exception:
         # To handle all other exceptions
         return {"error": "There was a problem retrieving the data from this file."}
+    
+
+def add_booking(class_date, data):
+    """ This function is used to add a booking to the file """
+    if "bookings" not in data:
+        data["bookings"] = {}
+    if f"{class_date}" not in data["bookings"]:
+        data["bookings"][f"{class_date}"] = 1
+    else:
+        data["bookings"][f"{class_date}"] += 1
+    with open("data.json", "w") as f:
+        json.dump(data, f)
+        f.close()
 
 
 @app.route("/")
@@ -88,6 +101,42 @@ def classes():
         # if there is no error, but there is no key called 'all_classes', we return a message
         else:
             return {"message": "There are no classes to display."}, 200 # OK
+        
+
+@app.route("/bookings/", methods=["POST", "GET"])
+def bookings():
+    """
+    bookings endpoint, to book a class.
+    The bookings are saved in a file called data.json
+    """
+    if request.method == "POST":
+        # Get existing data from data.json
+        data = get_data()
+        if "error" in data.keys():
+            return data, 500 # Server error
+        elif "all_classes" not in data.keys() or data["all_classes"] == {}:
+            return {"meggage": "There are no classes to book"}, 200 # OK
+        else:
+            requested_class = request.json
+
+            # check if date was passed
+            if "date" in requested_class:
+                valid_booking = validate_booking(requested_class["date"], data["all_classes"])
+                if valid_booking == False:
+                    return {"error": "Please, choose a valid date"}, 400 # Bad request
+                else:
+                    try:
+                        add_booking(requested_class["date"], data)
+                        return {"message": "Booking confirmed"}, 201 # Created
+                    except:
+                        return {"There was a problem saving this bookinf"}, 500 # Server error
+
+            else:
+                return {"error": "Please, choose a date"}, 400 # Bad request
+
+    else:
+        return {"meggage": "Book a class"}, 200 # OK
+
         
 
 if __name__ == "__main__":
