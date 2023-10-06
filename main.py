@@ -31,21 +31,21 @@ def check_capacity(class_date, data, class_capacity):
     in a specific date """
     available = True
     if "bookings" in data and class_date in data["bookings"]:
-        booked = data["bookings"][f"{class_date}"]
+        booked = len(data["bookings"][f"{class_date}"])
         available = booked < class_capacity
     
     return available
 
-    
 
-def add_booking(class_date, data):
+def add_booking(class_date, client_name, data):
     """ This function is used to add a booking to the file """
     if "bookings" not in data:
         data["bookings"] = {}
     if f"{class_date}" not in data["bookings"]:
-        data["bookings"][f"{class_date}"] = 1
+        data["bookings"][f"{class_date}"] = [client_name]
     else:
-        data["bookings"][f"{class_date}"] += 1
+        data["bookings"][f"{class_date}"].append(client_name)
+
     with open("data.json", "w") as f:
         json.dump(data, f)
         f.close()
@@ -132,7 +132,7 @@ def bookings():
             requested_class = request.json
 
             # check if date was passed
-            if "date" in requested_class:
+            if "date" in requested_class and "client_name" in requested_class:
                 check_booking = validate_booking(requested_class["date"], data["all_classes"])
                 valid_booking = check_booking[0]
                 class_capacity = check_booking[1]
@@ -145,12 +145,12 @@ def bookings():
                     return {"error": "Sorry, this class is full."}, 400 # Bad request
                 else:
                     try:
-                        add_booking(requested_class["date"], data)
+                        add_booking(requested_class["date"], requested_class["client_name"], data)
                         return {"message": "Booking confirmed"}, 201 # Created
                     except:
                         return {"There was a problem saving this booking"}, 500 # Server error
             else:
-                return {"error": "Please, choose a date."}, 400 # Bad request
+                return {"error": "Please, enter all information (client_name, date)."}, 400 # Bad request
 
     else:
         return {"meggage": "Book a class"}, 200 # OK
