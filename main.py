@@ -29,7 +29,7 @@ def get_data():
 def check_capacity(class_date, data, class_capacity):
     """ This function is used to check if the bookings have reached the availability for a class
     in a specific date """
-    available = False
+    available = True
     if "bookings" in data and class_date in data["bookings"]:
         booked = data["bookings"][f"{class_date}"]
         available = booked < class_capacity
@@ -46,9 +46,9 @@ def add_booking(class_date, data):
         data["bookings"][f"{class_date}"] = 1
     else:
         data["bookings"][f"{class_date}"] += 1
-        with open("data.json", "w") as f:
-            json.dump(data, f)
-            f.close()
+    with open("data.json", "w") as f:
+        json.dump(data, f)
+        f.close()
 
 
 @app.route("/")
@@ -144,7 +144,6 @@ def bookings():
                 elif is_available == False:
                     return {"error": "Sorry, this class is full."}, 400 # Bad request
                 else:
-
                     try:
                         add_booking(requested_class["date"], data)
                         return {"message": "Booking confirmed"}, 201 # Created

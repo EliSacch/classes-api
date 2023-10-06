@@ -63,6 +63,18 @@ def validate_class(new_class):
         except:
             errors.append("Invalid date passed")
 
+    # check if capacity is integer
+    if "capacity" in new_class.keys():
+        try:
+            capacity = new_class["capacity"]
+            if isinstance (capacity, int):
+                if capacity <= 0:
+                    errors.append("Capacity should be a positive number")
+            else:
+                errors.append("Capacity should be a an integer")
+        except:
+            errors.append("Invalid value passed for 'capacity'")
+
     # If there is any error, return them all
     if len(errors) > 0:
         result = {"error" : {
