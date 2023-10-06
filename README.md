@@ -38,15 +38,14 @@ Fitness studio API to create classes and manage bookings
 
 ### Models
 
-1. __GymClass__
+1. __class__
     - id - Integer, PrimaryKey
     - class_name - String, Required
     - capacity - Integer, Required
     - start_date - Date, Required
     - end_date - Date, Required
 
-    Note: I decided to call this model GymClass, instead of "Class" because __"class"__ is a reserved keyword in python and using "Class" could have created confusion.
-
+    Note: The id would ideally be automatically assigned, but for this task we will enter it manually
 
 2. __Booking__
     - id - Integer, PrimaryKey
@@ -61,9 +60,6 @@ Fitness studio API to create classes and manage bookings
     Methods:
     - GET   /classes - Return all classes
     - POST  /classes - Create new class
-    - GET   /classes/{id} - Return class with id of {id}
-    - PUT   /classes/{id} - Edit class with id of {id}
-    - DELETE    /classes/{id} - Delete class with id of {id}
 
 2. Bookings
 
