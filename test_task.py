@@ -41,6 +41,11 @@ def test_cannot_add_class_with_missing_data():
     assert "Mandatory value not provided 'class_name'" in response.json["errors"]
 
 
+def test_cannot_add_class_with_invalid_capacity():
+    response = app.test_client().post('/classes', json={"id": 1, "class_name": "Test class", "capacity": "invalid", "start_date": "01-04-2024", "end_date": "3-04-2024"})
+    assert response.status_code == 400
+
+
 def test_cannot_add_class_with_invalid_date():
     response = app.test_client().post('/classes', json={"id": 1, "class_name": "Test class", "capacity": 12, "start_date": "invalid", "end_date": "3-03-2024"})
     assert response.status_code == 400
