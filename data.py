@@ -25,12 +25,16 @@ def overwrite_data(data):
         f.close()
 
 
-def add_booking(class_date, client_name, data):
+def add_booking(id, class_date, client_name, data):
     """ This function is used to add a booking to the file """
     if "bookings" not in data:
         data["bookings"] = {}
     if f"{class_date}" not in data["bookings"]:
-        data["bookings"][f"{class_date}"] = [client_name]
+        data["bookings"][f"{class_date}"] = [{"booking_id": id,
+                                              "client":client_name
+                                              }]
     else:
-        data["bookings"][f"{class_date}"].append(client_name)
+        data["bookings"][f"{class_date}"].append({"booking_id": id,
+                                              "client":client_name
+                                              })
     overwrite_data(data)

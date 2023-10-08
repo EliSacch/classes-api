@@ -6,6 +6,10 @@ from validation import validate_class, validate_overlapping, validate_booking, c
 app = Flask(__name__)
 
 
+class_id = 0
+booking_id = 0
+
+
 @app.route("/")
 def home():
     """ This is the home """
@@ -29,7 +33,10 @@ def classes():
         if "error" in new_class:
             return new_class["error"], 400 # Bad request
         else:
-            id = new_class['id']
+            # The id is automatically assigned to the class
+            global class_id
+            id = class_id
+            class_id+=1
         
         # If there is an error in the file, do not submit the new data
         if "error" in data.keys():
@@ -68,7 +75,7 @@ def classes():
             return {"message": "There are no classes to display."}, 200 # OK
         
 
-@app.route("/bookings/", methods=["POST", "GET"])
+@app.route("/bookings", methods=["POST"])
 def bookings():
     """
     bookings endpoint, to book a class.
@@ -98,7 +105,11 @@ def bookings():
                     return {"error": "Sorry, this class is full."}, 400 # Bad request
                 else:
                     try:
-                        add_booking(requested_class["date"], requested_class["client_name"], data)
+                        # The id is automatically assigned to the booking
+                        global booking_id
+                        id = booking_id
+                        booking_id+=1
+                        add_booking(id, requested_class["date"], requested_class["client_name"], data)
                         return {"message": "Booking confirmed"}, 201 # Created
                     except:
                         return {"There was a problem saving this booking"}, 500 # Server error

@@ -29,7 +29,7 @@ def validate_class(new_class):
     end = None
 
     # Check if all mandatory fields were provided
-    mandatory_fields = ["id", "class_name", "capacity", "start_date", "end_date"]
+    mandatory_fields = ["class_name", "capacity", "start_date", "end_date"]
     for field in mandatory_fields:
         if field not in new_class.keys():
             errors.append(f"Mandatory value not provided '{field}'")
