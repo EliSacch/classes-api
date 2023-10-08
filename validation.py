@@ -168,3 +168,14 @@ def validate_booking(requested_class_date, existing_classes):
             capacity = check_class[1]
 
     return is_valid, capacity
+
+
+def check_capacity(class_date, data, class_capacity):
+    """ This function is used to check if the bookings have reached the availability for a class
+    in a specific date """
+    available = True
+    if "bookings" in data and class_date in data["bookings"]:
+        booked = len(data["bookings"][f"{class_date}"])
+        available = booked < class_capacity
+    
+    return available

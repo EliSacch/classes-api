@@ -1,54 +1,9 @@
 from flask import Flask, request
-from validation import validate_class, validate_overlapping, validate_booking
-
-import json
+from data import get_data, overwrite_data, add_booking
+from validation import validate_class, validate_overlapping, validate_booking, check_capacity
 
 
 app = Flask(__name__)
-
-
-def get_data():
-    """
-    This function is used to get data from data.json file.
-    It opens the file and handle exceptions in case data cannot be retrieved.
-    """
-    try:
-        f = open("data.json")
-        data = json.load(f)
-        f.close()
-        return data
-        
-    except FileNotFoundError:
-        # This exception checks if the file exists
-        return {"error": "This file doesn't exist."}
-    except Exception:
-        # To handle all other exceptions
-        return {"error": "There was a problem retrieving the data from this file."}
-    
-
-def check_capacity(class_date, data, class_capacity):
-    """ This function is used to check if the bookings have reached the availability for a class
-    in a specific date """
-    available = True
-    if "bookings" in data and class_date in data["bookings"]:
-        booked = len(data["bookings"][f"{class_date}"])
-        available = booked < class_capacity
-    
-    return available
-
-
-def add_booking(class_date, client_name, data):
-    """ This function is used to add a booking to the file """
-    if "bookings" not in data:
-        data["bookings"] = {}
-    if f"{class_date}" not in data["bookings"]:
-        data["bookings"][f"{class_date}"] = [client_name]
-    else:
-        data["bookings"][f"{class_date}"].append(client_name)
-
-    with open("data.json", "w") as f:
-        json.dump(data, f)
-        f.close()
 
 
 @app.route("/")
@@ -93,9 +48,7 @@ def classes():
                 # Then add the new_class
                 data['all_classes'][f"{id}"] = new_class
                 # Overwrite data.json file to include new data
-                with open("data.json", "w") as f:
-                    json.dump(data, f)
-                    f.close()
+                overwrite_data(data)
 
                 # return the newly added class with rsponse of 201
                 return new_class, 201 # Created

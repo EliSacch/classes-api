@@ -1,5 +1,5 @@
 # classes-api
-Fitness studio API to create classes and manage bookings
+Fitness studio API to create classes and manage bookings.
 
 
 ## User Stories
@@ -38,7 +38,7 @@ Fitness studio API to create classes and manage bookings
 
 ### Models
 
-1. __class__
+1. __Class__
     - id - Integer, PrimaryKey
     - class_name - String, Required
     - capacity - Integer, Required
@@ -53,40 +53,138 @@ Fitness studio API to create classes and manage bookings
     - date - Date, Required
 
 
+### Directory Structure
+
+- __main.py__ - contains the endpoints and the main logic
+- __validation.py__ - contains the logic to validate if the data submitted is valid
+- __data.py__ - Contains the logic to retrieve and write data
+- __data.json__ - For semplicity we use a json file to store the data
+- __tests folder__ - Contains the test files
+
+
 ### Endpoints
 
 1. Classes
 
     Methods:
-    - GET   /classes - Return all classes
-    - POST  /classes - Create new class
+    - GET   /classes - Returns all classes
+    - POST  /classes - Creates new class
 
 2. Bookings
 
     Methods:
-    - POST  /bookings
+    - POST  /bookings - Creates new bookings
+
+
+Note: For the purpose of this task the PUT and DELETE method were not implemented.
 
 
 ## Local deployment
 
 ### 1. Clone the repo
 
-### 2. Create and activate virtual environment (reccommended)
+1. From the terminal navigare to the folder where you want to clone the repository
 
-### 3. Install dependencies from requirements.txt
+2. Run the following command:
+
+        git clone https://github.com/EliSacch/classes-api.git
+
+### 2. Make sure python and pip are installed
+
+In the retminal, run the following commands:
+
+#### Python:
+        // Windows
+        python
+
+        // Mac
+        python3
+
+If it is installed you will see a response which will include the version number.
+
+Check the [official documentation](https://wiki.python.org/moin/BeginnersGuide/Download)
+
+
+#### pip
+
+Usually, pip is automatically installed if Python was downloaded from python.org
+
+To check if pip is installed, run the following command:
+
+        pip --version
+
+Check the [official documentation](https://pypi.org/project/pip/)
+
+
+### 3. Create and activate virtual environment (reccommended)
+
+The virtualenv package is required to create virtual environments.
+
+- To install the virtualenv package:
+
+        pip install virtualenv
+
+- To create a virtual environment:
+
+        python -m venv venv
+        
+        or
+        
+        python3 -m venv venv
+
+- To activate the virtual environment
+
+        // Windows
+        . venv\Scripts\activate
+
+        or
+
+        . venv\Scripts\activate.bin
+
+        // Mac
+        source venv/bin/activate
+
+- To deactivate the virtual environment
+
+        deactivate
+
+See [official documentation](https://docs.python.org/3/library/venv.html#how-venvs-work)
+
+
+### 4. Install dependencies from requirements.txt
 
 In the terminal run the following code
 
         pip install -r requirements.txt
 
-### 4. Run the app
+This will install all packages required to run this project, from the requirements.txt file.
+
+Required packages:
+
+- [Flask](https://pypi.org/project/Flask/)
+- [requests](https://pypi.org/project/requests/)
+- [dateutil](https://pypi.org/project/python-dateutil/)
+- [pytest](https://docs.pytest.org/en/7.4.x/getting-started.html)
+
+### 5. Run the app
 
 In the terminal run the following code
 
         python main.py
 
-### 5. Run tests
 
-In the rerminal run the following code
+The app runs on localhost:
+
+Home: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+Classes: [http://127.0.0.1:8000/classes](http://127.0.0.1:8000/classes)
+
+Bookings: [http://127.0.0.1:8000/bookings](http://127.0.0.1:8000/bookings)
+
+
+
+### 6. Run tests
+
+In the rerminal run the following command
 
         pytest
