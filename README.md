@@ -2,6 +2,14 @@
 Fitness studio API to create classes and manage bookings.
 
 
+Table of content:
+
+1. [User stories](#user-stories)
+2. [Project planning](#project-planning)
+3. [Local deployment](#local-deployment)
+4. [Testing](#testing)
+
+
 ## User Stories
 
 1. Story - Create classes
@@ -57,9 +65,13 @@ Fitness studio API to create classes and manage bookings.
 
 - __main.py__ - contains the endpoints and the main logic
 - __validation.py__ - contains the logic to validate if the data submitted is valid
+
 - __data.py__ - Contains the logic to retrieve and write data
 - __data.json__ - For semplicity we use a json file to store the data
+
+
 - __tests folder__ - Contains the test files
+- __test_data.json__ - Is the json file used from tests to store data
 
 
 ### Endpoints
@@ -73,6 +85,7 @@ Fitness studio API to create classes and manage bookings.
 2. Bookings
 
     Methods:
+    - GET  /bookings - Returns all bookings
     - POST  /bookings - Creates new bookings
 
 
@@ -97,7 +110,7 @@ In the retminal, run the following commands:
         // Windows
         python
 
-        // Mac
+        // Mac or Linux
         python3
 
 If it is installed you will see a response which will include the version number.
@@ -166,6 +179,11 @@ Required packages:
 - [dateutil](https://pypi.org/project/python-dateutil/)
 - [pytest](https://docs.pytest.org/en/7.4.x/getting-started.html)
 
+Optional:
+
+-[pytest-cov](pip install pytest-cov) to check coverage
+
+
 ### 5. Run the app
 
 In the terminal run the following code
@@ -183,8 +201,64 @@ Bookings: [http://127.0.0.1:8000/bookings](http://127.0.0.1:8000/bookings)
 
 
 
-### 6. Run tests
+## Testing
 
-In the rerminal run the following command
+### Automated testing
+
+In the terminal run the following command to run the tests:
 
         pytest
+
+Check test coverage (if pytest-cov is installed):
+
+        pytest --cov=tests/
+
+
+Final coverage result:
+
+![coverage](media/test_coverage.png)
+
+
+### Manual testing
+
+For manual testing it is reccommended to use an application such as [Postman](https://www.postman.com/)
+
+Make sure to set the following headers for all tests:
+
+key: Content-Type
+value: application/json
+
+<details>
+<summary>Headers</summary>
+
+![headers](media/postman_headers.png)
+
+</details>
+
+Select the method (GET or POST) and enter the [endpoint url](#endpoints)
+
+For POST requests enter the data to be sent in the "body" section
+
+<details>
+<summary>POST request example</summary>
+
+![example](media/postman_example.png)
+
+</details>
+
+
+-----
+
+Alternatively edit the try_me.py file to send the requests locally
+
+1. Make sure that the app is running
+
+        python main.py
+
+2. Edit the data fields to send different requests
+
+3. Run the following command to send the requests
+
+        python try_me.py
+
+4. Check the result in the terminal and in the browser, at [http://127.0.0.1:8000](http://127.0.0.1:8000)
