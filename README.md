@@ -181,7 +181,7 @@ Required packages:
 
 Optional:
 
--[pytest-cov](pip install pytest-cov) to check coverage
+- [pytest-cov](https://pypi.org/project/pytest-cov/) to check coverage
 
 
 ### 5. Run the app

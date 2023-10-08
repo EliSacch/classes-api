@@ -10,6 +10,7 @@ def app():
     overwrite_data(initial_data, "tests/test_data.json")
     print("CLEARING test_data")
     app = main.app
+
     app.config["file_path"] = "tests/test_data.json"
 
     yield app
