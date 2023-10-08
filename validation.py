@@ -29,7 +29,7 @@ def validate_class(new_class):
     end = None
 
     # Check if all mandatory fields were provided
-    mandatory_fields = ["id", "class_name", "capacity", "start_date", "end_date"]
+    mandatory_fields = ["class_name", "capacity", "start_date", "end_date"]
     for field in mandatory_fields:
         if field not in new_class.keys():
             errors.append(f"Mandatory value not provided '{field}'")
@@ -117,7 +117,7 @@ def validate_overlapping(new_class, existing_classes):
 
     overlaps = False
 
-    for i in range(len(existing_classes)):
+    for i in existing_classes.keys():
         tuple2 = calculate_dates_tuples(i, existing_classes)
         if check_dates(tuple1, tuple2):
             overlaps = True
@@ -131,7 +131,7 @@ def validate_class_exists(date, existing_classes):
     class_exists = False
     capacity = 0
 
-    for i in range(len(existing_classes)):
+    for i in existing_classes.keys():
         tuple2 = calculate_dates_tuples(i, existing_classes)
         if check_dates(tuple1, tuple2):
             class_exists = True
@@ -168,3 +168,14 @@ def validate_booking(requested_class_date, existing_classes):
             capacity = check_class[1]
 
     return is_valid, capacity
+
+
+def check_capacity(class_date, data, class_capacity):
+    """ This function is used to check if the bookings have reached the availability for a class
+    in a specific date """
+    available = True
+    if "bookings" in data and class_date in data["bookings"]:
+        booked = len(data["bookings"][f"{class_date}"])
+        available = booked < class_capacity
+    
+    return available

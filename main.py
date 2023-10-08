@@ -1,54 +1,9 @@
-from flask import Flask, request
-from validation import validate_class, validate_overlapping, validate_booking
-
-import json
-
+from flask import Flask, request, current_app
+from data import get_data, overwrite_data, add_booking
+from validation import validate_class, validate_overlapping, validate_booking, check_capacity
+import os
 
 app = Flask(__name__)
-
-
-def get_data():
-    """
-    This function is used to get data from data.json file.
-    It opens the file and handle exceptions in case data cannot be retrieved.
-    """
-    try:
-        f = open("data.json")
-        data = json.load(f)
-        f.close()
-        return data
-        
-    except FileNotFoundError:
-        # This exception checks if the file exists
-        return {"error": "This file doesn't exist."}
-    except Exception:
-        # To handle all other exceptions
-        return {"error": "There was a problem retrieving the data from this file."}
-    
-
-def check_capacity(class_date, data, class_capacity):
-    """ This function is used to check if the bookings have reached the availability for a class
-    in a specific date """
-    available = True
-    if "bookings" in data and class_date in data["bookings"]:
-        booked = len(data["bookings"][f"{class_date}"])
-        available = booked < class_capacity
-    
-    return available
-
-
-def add_booking(class_date, client_name, data):
-    """ This function is used to add a booking to the file """
-    if "bookings" not in data:
-        data["bookings"] = {}
-    if f"{class_date}" not in data["bookings"]:
-        data["bookings"][f"{class_date}"] = [client_name]
-    else:
-        data["bookings"][f"{class_date}"].append(client_name)
-
-    with open("data.json", "w") as f:
-        json.dump(data, f)
-        f.close()
 
 
 @app.route("/")
@@ -66,15 +21,13 @@ def classes():
     """
     if request.method == "POST":
         # Get existing data from data.json
-        data = get_data()
+        data = get_data(current_app.config["file_path"])
 
         # Get posted information
         new_class = validate_class(request.json)
         
         if "error" in new_class:
             return new_class["error"], 400 # Bad request
-        else:
-            id = new_class['id']
         
         # If there is an error in the file, do not submit the new data
         if "error" in data.keys():
@@ -91,11 +44,15 @@ def classes():
 
             if is_overlapping == False:
                 # Then add the new_class
-                data['all_classes'][f"{id}"] = new_class
+                # The id is automatically assigned to the class
+                if "class_id" not in data.keys():
+                    data["class_id"] = 0
+                class_id = data["class_id"]
+                data['all_classes'][f"{class_id}"] = new_class
+                data['class_id'] += 1
+
                 # Overwrite data.json file to include new data
-                with open("data.json", "w") as f:
-                    json.dump(data, f)
-                    f.close()
+                overwrite_data(data, current_app.config["file_path"])
 
                 # return the newly added class with rsponse of 201
                 return new_class, 201 # Created
@@ -104,7 +61,7 @@ def classes():
     
     else:
         # if the method is not POST, we just get existing classes
-        data = get_data()
+        data = get_data(current_app.config["file_path"])
         if "all_classes" in data.keys() and data['all_classes'] != {}:
             return data['all_classes'], 200 # OK
         # if there is an error getting the data from the file, we return the error
@@ -115,7 +72,7 @@ def classes():
             return {"message": "There are no classes to display."}, 200 # OK
         
 
-@app.route("/bookings/", methods=["POST", "GET"])
+@app.route("/bookings", methods=["POST", "GET"])
 def bookings():
     """
     bookings endpoint, to book a class.
@@ -123,7 +80,7 @@ def bookings():
     """
     if request.method == "POST":
         # Get existing data from data.json
-        data = get_data()
+        data = get_data(current_app.config["file_path"])
         if "error" in data.keys():
             return data, 500 # Server error
         elif "all_classes" not in data.keys() or data["all_classes"] == {}:
@@ -145,7 +102,13 @@ def bookings():
                     return {"error": "Sorry, this class is full."}, 400 # Bad request
                 else:
                     try:
-                        add_booking(requested_class["date"], requested_class["client_name"], data)
+                        # The id is automatically assigned to the booking
+                        if "booking_id" not in data.keys():
+                            data["booking_id"] = 0
+                        booking_id = data["booking_id"]
+                        data["booking_id"] += 1
+
+                        add_booking(booking_id, requested_class["date"], requested_class["client_name"], data, current_app.config["file_path"])
                         return {"message": "Booking confirmed"}, 201 # Created
                     except:
                         return {"There was a problem saving this booking"}, 500 # Server error
@@ -153,9 +116,28 @@ def bookings():
                 return {"error": "Please, enter all information (client_name, date)."}, 400 # Bad request
 
     else:
-        return {"meggage": "Book a class"}, 200 # OK
+        # if the method is not POST, we just get existing bookings
+        data = get_data(current_app.config["file_path"])
+        if "bookings" in data.keys() and data['bookings'] != {}:
+            return data['bookings'], 200 # OK
+        # if there is an error getting the data from the file, we return the error
+        elif "error" in data.keys():
+            return data, 500 # Bad request
+        # if there is no error, but there is no key called 'bookings', we return a message
+        else:
+            return {"message": "There are no bookings to display."}, 200 # OK
         
 
 if __name__ == "__main__":
+    app.config["file_path"] = "data.json"
+
+    file_path = app.config["file_path"]
+    
+    if os.path.getsize(file_path) == 0:
+        overwrite_data({
+            "class_id": 0,
+            "booking_id": 0
+        }, file_path)
+
     # debug should be set to False in production, but I will leave it to True for assessment
     app.run(port=8000, debug=True)
