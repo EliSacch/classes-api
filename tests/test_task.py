@@ -1,10 +1,9 @@
-import json
 from main import app
+from data import get_data, overwrite_data
 
 try:
-    with open("data.json", "w") as f:
-        json.dump({}, f)
-        f.close()
+    data = {}
+    overwrite_data(data)
 except:
     print("There was an error opening the file")
 
@@ -93,9 +92,7 @@ def test_class_count():
     response = app.test_client().post('/bookings/', json={"id": 0, "client_name": "client", "date": "01-03-2024"})
     assert response.status_code == 201
     try:
-        f = open("data.json")
-        data = json.load(f)
-        f.close()
+        data = get_data()
     except Exception:
         print("There was an error opening the file")
     assert len(data["bookings"]["01-03-2024"]) == 2
