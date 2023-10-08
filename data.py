@@ -1,12 +1,12 @@
 import json
 
-def get_data():
+def get_data(file_path):
     """
     This function is used to get data from data.json file.
     It opens the file and handle exceptions in case data cannot be retrieved.
     """
     try:
-        f = open("data.json")
+        f = open(file_path)
         data = json.load(f)
         f.close()
         return data
@@ -19,13 +19,13 @@ def get_data():
         return {"error": "There was a problem retrieving the data from this file."}
 
 
-def overwrite_data(data):
-    with open("data.json", "w") as f:
+def overwrite_data(data, file_path):
+    with open(file_path, "w") as f:
         json.dump(data, f)
         f.close()
 
 
-def add_booking(id, class_date, client_name, data):
+def add_booking(id, class_date, client_name, data, file_path):
     """ This function is used to add a booking to the file """
     if "bookings" not in data:
         data["bookings"] = {}
@@ -44,4 +44,4 @@ def add_booking(id, class_date, client_name, data):
             {"booking_id": id,
             "client":client_name
             })
-    overwrite_data(data)
+    overwrite_data(data,file_path)

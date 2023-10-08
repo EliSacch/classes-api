@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, current_app
 from data import get_data, overwrite_data, add_booking
 from validation import validate_class, validate_overlapping, validate_booking, check_capacity
 import os
@@ -21,7 +21,7 @@ def classes():
     """
     if request.method == "POST":
         # Get existing data from data.json
-        data = get_data()
+        data = get_data(current_app.config["file_path"])
 
         # Get posted information
         new_class = validate_class(request.json)
@@ -45,12 +45,14 @@ def classes():
             if is_overlapping == False:
                 # Then add the new_class
                 # The id is automatically assigned to the class
+                if "class_id" not in data.keys():
+                    data["class_id"] = 0
                 class_id = data["class_id"]
                 data['all_classes'][f"{class_id}"] = new_class
                 data['class_id'] += 1
 
                 # Overwrite data.json file to include new data
-                overwrite_data(data)
+                overwrite_data(data, current_app.config["file_path"])
 
                 # return the newly added class with rsponse of 201
                 return new_class, 201 # Created
@@ -59,7 +61,7 @@ def classes():
     
     else:
         # if the method is not POST, we just get existing classes
-        data = get_data()
+        data = get_data(current_app.config["file_path"])
         if "all_classes" in data.keys() and data['all_classes'] != {}:
             return data['all_classes'], 200 # OK
         # if there is an error getting the data from the file, we return the error
@@ -78,7 +80,7 @@ def bookings():
     """
     if request.method == "POST":
         # Get existing data from data.json
-        data = get_data()
+        data = get_data(current_app.config["file_path"])
         if "error" in data.keys():
             return data, 500 # Server error
         elif "all_classes" not in data.keys() or data["all_classes"] == {}:
@@ -101,10 +103,12 @@ def bookings():
                 else:
                     try:
                         # The id is automatically assigned to the booking
+                        if "booking_id" not in data.keys():
+                            data["booking_id"] = 0
                         booking_id = data["booking_id"]
                         data["booking_id"] += 1
 
-                        add_booking(booking_id, requested_class["date"], requested_class["client_name"], data)
+                        add_booking(booking_id, requested_class["date"], requested_class["client_name"], data, current_app.config["file_path"])
                         return {"message": "Booking confirmed"}, 201 # Created
                     except:
                         return {"There was a problem saving this booking"}, 500 # Server error
@@ -113,7 +117,7 @@ def bookings():
 
     else:
         # if the method is not POST, we just get existing bookings
-        data = get_data()
+        data = get_data(current_app.config["file_path"])
         if "bookings" in data.keys() and data['bookings'] != {}:
             return data['bookings'], 200 # OK
         # if there is an error getting the data from the file, we return the error
@@ -125,12 +129,15 @@ def bookings():
         
 
 if __name__ == "__main__":
-    # debug should be set to False in production, but I will leave it to True for assessment
-    data = get_data()
-    if os.path.getsize("data.json") == 0:
+    app.config["file_path"] = "data.json"
+
+    file_path = app.config["file_path"]
+    
+    if os.path.getsize(file_path) == 0:
         overwrite_data({
             "class_id": 0,
             "booking_id": 0
-        })
+        }, file_path)
 
+    # debug should be set to False in production, but I will leave it to True for assessment
     app.run(port=8000, debug=True)
