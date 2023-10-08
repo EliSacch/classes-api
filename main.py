@@ -32,11 +32,6 @@ def classes():
         
         if "error" in new_class:
             return new_class["error"], 400 # Bad request
-        else:
-            # The id is automatically assigned to the class
-            global class_id
-            id = class_id
-            class_id+=1
         
         # If there is an error in the file, do not submit the new data
         if "error" in data.keys():
@@ -53,7 +48,11 @@ def classes():
 
             if is_overlapping == False:
                 # Then add the new_class
-                data['all_classes'][f"{id}"] = new_class
+                # The id is automatically assigned to the class
+                global class_id
+                data['all_classes'][f"{class_id}"] = new_class
+                class_id+=1
+
                 # Overwrite data.json file to include new data
                 overwrite_data(data)
 
@@ -75,7 +74,7 @@ def classes():
             return {"message": "There are no classes to display."}, 200 # OK
         
 
-@app.route("/bookings", methods=["POST"])
+@app.route("/bookings", methods=["POST", "GET"])
 def bookings():
     """
     bookings endpoint, to book a class.
@@ -107,9 +106,8 @@ def bookings():
                     try:
                         # The id is automatically assigned to the booking
                         global booking_id
-                        id = booking_id
-                        booking_id+=1
-                        add_booking(id, requested_class["date"], requested_class["client_name"], data)
+                        add_booking(booking_id, requested_class["date"], requested_class["client_name"], data)
+                        booking_id += 1
                         return {"message": "Booking confirmed"}, 201 # Created
                     except:
                         return {"There was a problem saving this booking"}, 500 # Server error
@@ -117,9 +115,19 @@ def bookings():
                 return {"error": "Please, enter all information (client_name, date)."}, 400 # Bad request
 
     else:
-        return {"meggage": "Book a class"}, 200 # OK
+        # if the method is not POST, we just get existing bookings
+        data = get_data()
+        if "bookings" in data.keys() and data['bookings'] != {}:
+            return data['bookings'], 200 # OK
+        # if there is an error getting the data from the file, we return the error
+        elif "error" in data.keys():
+            return data, 500 # Bad request
+        # if there is no error, but there is no key called 'bookings', we return a message
+        else:
+            return {"message": "There are no bookings to display."}, 200 # OK
         
 
 if __name__ == "__main__":
     # debug should be set to False in production, but I will leave it to True for assessment
+    overwrite_data({})
     app.run(port=8000, debug=True)

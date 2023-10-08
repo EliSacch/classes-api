@@ -117,7 +117,7 @@ def validate_overlapping(new_class, existing_classes):
 
     overlaps = False
 
-    for i in range(len(existing_classes)):
+    for i in existing_classes.keys():
         tuple2 = calculate_dates_tuples(i, existing_classes)
         if check_dates(tuple1, tuple2):
             overlaps = True
@@ -131,7 +131,7 @@ def validate_class_exists(date, existing_classes):
     class_exists = False
     capacity = 0
 
-    for i in range(len(existing_classes)):
+    for i in existing_classes.keys():
         tuple2 = calculate_dates_tuples(i, existing_classes)
         if check_dates(tuple1, tuple2):
             class_exists = True
