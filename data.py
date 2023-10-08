@@ -17,7 +17,7 @@ def get_data():
     except Exception:
         # To handle all other exceptions
         return {"error": "There was a problem retrieving the data from this file."}
-    
+
 
 def overwrite_data(data):
     with open("data.json", "w") as f:
@@ -30,11 +30,18 @@ def add_booking(id, class_date, client_name, data):
     if "bookings" not in data:
         data["bookings"] = {}
     if f"{class_date}" not in data["bookings"]:
-        data["bookings"][f"{class_date}"] = [{"booking_id": id,
-                                              "client":client_name
-                                              }]
+        data["bookings"][f"{class_date}"] = {
+            "count": 1,
+            "clients_list":[
+                {"booking_id": id,
+                 "client":client_name
+                 }
+                 ]
+                 }
     else:
-        data["bookings"][f"{class_date}"].append({"booking_id": id,
-                                              "client":client_name
-                                              })
+        data["bookings"][f"{class_date}"]["count"] += 1
+        data["bookings"][f"{class_date}"]["clients_list"].append(
+            {"booking_id": id,
+            "client":client_name
+            })
     overwrite_data(data)

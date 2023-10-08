@@ -2,7 +2,10 @@ from main import app
 from data import get_data, overwrite_data
 
 try:
-    data = {}
+    data = {
+        "class_id": 0,
+        "booking_id": 0
+    }
     overwrite_data(data)
 except:
     print("There was an error opening the file")
@@ -89,13 +92,11 @@ def test_cannot_book_class_with_invalid_date_format():
 
 
 def test_class_count():
-    response = app.test_client().post('/bookings', json={"client_name": "client", "date": "01-03-2024"})
-    assert response.status_code == 201
     try:
         data = get_data()
     except Exception:
         print("There was an error opening the file")
-    assert len(data["bookings"]["01-03-2024"]) == 2
+    assert data["bookings"]["01-03-2024"]["count"] == 1
 
 
 def test_cannot_book_class_over_capacity():

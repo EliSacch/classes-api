@@ -1,13 +1,9 @@
 from flask import Flask, request
 from data import get_data, overwrite_data, add_booking
 from validation import validate_class, validate_overlapping, validate_booking, check_capacity
-
+import os
 
 app = Flask(__name__)
-
-
-class_id = 0
-booking_id = 0
 
 
 @app.route("/")
@@ -49,9 +45,9 @@ def classes():
             if is_overlapping == False:
                 # Then add the new_class
                 # The id is automatically assigned to the class
-                global class_id
+                class_id = data["class_id"]
                 data['all_classes'][f"{class_id}"] = new_class
-                class_id+=1
+                data['class_id'] += 1
 
                 # Overwrite data.json file to include new data
                 overwrite_data(data)
@@ -105,9 +101,10 @@ def bookings():
                 else:
                     try:
                         # The id is automatically assigned to the booking
-                        global booking_id
+                        booking_id = data["booking_id"]
+                        data["booking_id"] += 1
+
                         add_booking(booking_id, requested_class["date"], requested_class["client_name"], data)
-                        booking_id += 1
                         return {"message": "Booking confirmed"}, 201 # Created
                     except:
                         return {"There was a problem saving this booking"}, 500 # Server error
@@ -129,5 +126,11 @@ def bookings():
 
 if __name__ == "__main__":
     # debug should be set to False in production, but I will leave it to True for assessment
-    overwrite_data({})
+    data = get_data()
+    if os.path.getsize("data.json") == 0:
+        overwrite_data({
+            "class_id": 0,
+            "booking_id": 0
+        })
+
     app.run(port=8000, debug=True)
